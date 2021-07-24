@@ -3,12 +3,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'AddWish.dart';
+
+class WishMainArguments {
+  int type;
+
+  WishMainArguments(this.type);
+}
+
 class WishMain extends StatelessWidget {
   final String title;
 
   WishMain({Key? key, required this.title}) : super(key: key);
 
-  CollectionReference wishes = FirebaseFirestore.instance.collection('wishes');
+  final CollectionReference wishes =
+      FirebaseFirestore.instance.collection('wishes');
 
   Future<String?> showMyDialog(BuildContext context, String id) {
     return showCupertinoDialog<String>(
@@ -49,38 +58,90 @@ class WishMain extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('愿望专区'),
+        title: Text('WTW'),
         actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).pushNamed('/addwish');
-            },
-            icon: Icon(
-              Icons.add_circle_outlined,
-              size: 40,
-            ),
-          ),
-          SizedBox(
-            width: 30,
-          )
+          TextButton(
+              onPressed: () {
+                FirebaseAuth.instance.signOut();
+              },
+              child: Text('logout'))
         ],
       ),
-      body: StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection('/wishes')
-            .where('taken', isEqualTo: false)
-            .where('completed', isEqualTo: false)
-            .snapshots(),
-        builder: (BuildContext context,
-            AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting ||
-              !snapshot.hasData ||
-              snapshot.hasError) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          return ListView.builder(
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(
+              'assets/images/wishmain.png',
+            ),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection('/wishes')
+              .where('taken', isEqualTo: false)
+              .where('completed', isEqualTo: false)
+              .snapshots(),
+          builder: streamBuilder,
+        ),
+      ),
+    );
+  }
+
+  Widget streamBuilder(BuildContext context,
+      AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting ||
+        !snapshot.hasData ||
+        snapshot.hasError) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    return Column(
+      children: [
+        SizedBox(height: 150),
+        Row(
+          children: [
+            Expanded(
+              child: IconButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamed(AddWishPage.routeName,
+                      arguments: WishMainArguments(1));
+                },
+                icon: Image.asset(
+                  'assets/images/1.png',
+                ),
+                iconSize: 80,
+              ),
+            ),
+            Expanded(
+              child: IconButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamed(AddWishPage.routeName,
+                      arguments: WishMainArguments(2));
+                },
+                icon: Image.asset(
+                  'assets/images/2.png',
+                ),
+                iconSize: 80,
+              ),
+            ),
+            Expanded(
+              child: IconButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamed(AddWishPage.routeName,
+                      arguments: WishMainArguments(3));
+                },
+                icon: Image.asset(
+                  'assets/images/3.png',
+                ),
+                iconSize: 80,
+              ),
+            ),
+          ],
+        ),
+        Flexible(
+          child: ListView.builder(
             itemCount: snapshot.requireData.docs.length,
             itemBuilder: (BuildContext context, int index) {
               QueryDocumentSnapshot<Map<String, dynamic>> item =
@@ -88,7 +149,9 @@ class WishMain extends StatelessWidget {
               return Card(
                 child: ListTile(
                   title: Text(item['title']),
-                  subtitle: Text(item['price'].toString()),
+                  subtitle: Text(
+                      '${item['price'].toString()} 心愿币 \n发布人: ${item['user'].substring(0, 11)}'),
+                  isThreeLine: true,
                   leading: Image(
                     image: AssetImage(
                         'assets/images/${item['type'] == 1 ? 1 : item['type'] == 2 ? 2 : 3}.png'),
@@ -99,12 +162,13 @@ class WishMain extends StatelessWidget {
                       showMyDialog(context, item.id);
                     },
                   ),
+                  tileColor: Colors.white,
                 ),
               );
             },
-          );
-        },
-      ),
+          ),
+        ),
+      ],
     );
   }
 }

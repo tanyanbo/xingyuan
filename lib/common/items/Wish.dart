@@ -6,11 +6,13 @@ class Wish {
   TypeOfWish type;
   bool taken;
   bool completed;
+  String user;
 
   Wish(
       {this.title = '',
       this.price = 0,
       this.type = TypeOfWish.INFO,
       this.taken = false,
-      this.completed = false});
+      this.completed = false,
+      required this.user});
 }

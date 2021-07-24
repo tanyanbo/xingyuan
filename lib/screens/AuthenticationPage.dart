@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:xingyuan/common/InputBox.dart';
+import 'package:xingyuan/screens/HomePage.dart';
 
 class AuthenticationPage extends StatefulWidget {
   const AuthenticationPage({Key? key}) : super(key: key);
@@ -41,27 +42,16 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     _formKey.currentState!.save();
 
     try {
-      UserCredential userCredential =
-          // await auth.signInAnonymously();
-          await auth.createUserWithEmailAndPassword(
+      await auth.signInWithEmailAndPassword(
         email: "${_credentials['phoneNumber'] as String}@email.com",
         password: _credentials['code'] as String,
       );
-
-      print('Login: $userCredential');
-
-      Navigator.of(context).pushNamed('/home');
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        UserCredential userCredential =
-            await auth.createUserWithEmailAndPassword(
-          email: _credentials['phoneNumber'] as String,
+        await auth.createUserWithEmailAndPassword(
+          email: '${_credentials['phoneNumber'] as String}@email.com',
           password: _credentials['code'] as String,
         );
-
-        print('Create User: ${userCredential}');
-
-        Navigator.of(context).pushNamed('/home');
       } else if (e.code == 'wrong-password') {
         showMyDialog(context);
       }
@@ -70,8 +60,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget renderAuthenticationPage() {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -129,6 +118,25 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
           mainAxisAlignment: MainAxisAlignment.center,
         ),
       ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: auth.authStateChanges(),
+      builder: (context, snapshot) {
+        print('ran');
+        if (snapshot.connectionState == ConnectionState.active) {
+          final User? user = snapshot.data;
+          if (user == null) {
+            print('logout successfully');
+            return renderAuthenticationPage();
+          }
+          return HomePage();
+        }
+        return CircularProgressIndicator();
+      },
     );
   }
 }

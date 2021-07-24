@@ -20,24 +20,9 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.pink[200],
       ),
       routes: {
-        '/': (_) {
-          return StreamBuilder<User?>(
-            stream: FirebaseAuth.instance.authStateChanges(),
-            builder: (context, snapshot) {
-              print('auth state changed');
-              if (snapshot.connectionState == ConnectionState.active) {
-                final User? user = snapshot.data;
-                if (user == null) {
-                  return AuthenticationPage();
-                }
-                return HomePage();
-              }
-              return CircularProgressIndicator();
-            },
-          );
-        },
-        '/home': (_) => HomePage(),
-        '/addwish': (_) => AddWishPage(),
+        '/': (_) => AuthenticationPage(),
+        HomePage.routeName: (_) => HomePage(),
+        AddWishPage.routeName: (_) => AddWishPage(),
       },
     );
   }

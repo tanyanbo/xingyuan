@@ -13,6 +13,7 @@ class ProfileMain extends StatelessWidget {
           TextButton(
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
+              print(FirebaseAuth.instance.currentUser);
             },
             child: Text('退出'),
             style: TextButton.styleFrom(

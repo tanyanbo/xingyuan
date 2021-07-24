@@ -1,9 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:xingyuan/common/items/Wish.dart';
+import 'package:xingyuan/screens/HomePage.dart';
+import 'package:xingyuan/screens/tabNavigation/wish/WishMain.dart';
 
 class AddWishPage extends StatefulWidget {
   AddWishPage({Key? key}) : super(key: key);
+
+  static const routeName = '/addWish';
 
   @override
   _AddWishPageState createState() => _AddWishPageState();
@@ -11,9 +16,9 @@ class AddWishPage extends StatefulWidget {
 
 class _AddWishPageState extends State<AddWishPage> {
   final _formKey = GlobalKey<FormState>();
-  Wish _editedWish = Wish();
+  Wish _editedWish = Wish(user: FirebaseAuth.instance.currentUser!.uid);
 
-  void submitForm(BuildContext context) async {
+  void submitForm(BuildContext context, WishMainArguments args) async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -22,20 +27,20 @@ class _AddWishPageState extends State<AddWishPage> {
     await FirebaseFirestore.instance.collection('wishes').add({
       'title': _editedWish.title,
       'price': _editedWish.price,
-      'type': _editedWish.type == TypeOfWish.INFO
-          ? 1
-          : _editedWish.type == TypeOfWish.PHYSICAL
-              ? 2
-              : 3,
+      'type': args.type,
       'date': DateTime.now(),
       'taken': false,
       'completed': false,
+      'user': _editedWish.user,
     });
-    Navigator.of(context).pushNamed('/home');
+    Navigator.of(context).pushReplacementNamed(HomePage.routeName);
   }
 
   @override
   Widget build(BuildContext context) {
+    final args =
+        ModalRoute.of(context)!.settings.arguments as WishMainArguments;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('添加新愿望'),
@@ -78,7 +83,7 @@ class _AddWishPageState extends State<AddWishPage> {
                 ),
                 ElevatedButton(
                   child: Text('发布'),
-                  onPressed: () => submitForm(context),
+                  onPressed: () => submitForm(context, args),
                   style: ElevatedButton.styleFrom(minimumSize: Size(200, 40)),
                 ),
               ],
