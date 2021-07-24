@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:xingyuan/screens/tabNavigation/profile/ProfileMain.dart';
 import 'package:xingyuan/screens/tabNavigation/wish/WishMain.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
+  HomePage({Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -26,10 +25,7 @@ class _HomePageState extends State<HomePage> {
       'Index 2: School',
       style: optionStyle,
     ),
-    Text(
-      'Index 3: Settings',
-      style: optionStyle,
-    ),
+    ProfileMain(),
   ];
 
   void _onItemTapped(int index) {

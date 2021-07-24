@@ -34,8 +34,6 @@ class _AddWishPageState extends State<AddWishPage> {
     Navigator.of(context).pushNamed('/home');
   }
 
-  TypeOfWish? _choice = TypeOfWish.INFO;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,39 +75,6 @@ class _AddWishPageState extends State<AddWishPage> {
                   },
                   keyboardType: TextInputType.number,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                ),
-                RadioListTile<TypeOfWish>(
-                  title: Text('信息咨询'),
-                  value: TypeOfWish.INFO,
-                  groupValue: _choice,
-                  onChanged: (TypeOfWish? val) {
-                    setState(() {
-                      _choice = val;
-                      _editedWish.type = val as TypeOfWish;
-                    });
-                  },
-                ),
-                RadioListTile<TypeOfWish>(
-                  title: Text('物质获取'),
-                  value: TypeOfWish.PHYSICAL,
-                  groupValue: _choice,
-                  onChanged: (TypeOfWish? val) {
-                    setState(() {
-                      _choice = val;
-                      _editedWish.type = val as TypeOfWish;
-                    });
-                  },
-                ),
-                RadioListTile<TypeOfWish>(
-                  title: Text('日行一善'),
-                  value: TypeOfWish.ACTION,
-                  groupValue: _choice,
-                  onChanged: (TypeOfWish? val) {
-                    setState(() {
-                      _choice = val;
-                      _editedWish.type = val as TypeOfWish;
-                    });
-                  },
                 ),
                 ElevatedButton(
                   child: Text('发布'),

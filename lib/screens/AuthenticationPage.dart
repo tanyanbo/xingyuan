@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:xingyuan/common/InputBox.dart';
 
 class AuthenticationPage extends StatefulWidget {
   const AuthenticationPage({Key? key}) : super(key: key);
@@ -9,13 +12,62 @@ class AuthenticationPage extends StatefulWidget {
 
 class _AuthenticationPageState extends State<AuthenticationPage> {
   final _formKey = GlobalKey<FormState>();
+  Map<String, String?> _credentials = {};
+  FirebaseAuth auth = FirebaseAuth.instance;
 
-  void submitForm(BuildContext context) {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+  Future<String?> showMyDialog(BuildContext context) {
+    return showCupertinoDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: const Text('验证失败'),
+          content: const Text('密码错误'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, 'Ok');
+              },
+              child: const Text('重新输入'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void submitForm(BuildContext context) async {
+    if (!_formKey.currentState!.validate()) return;
+
     _formKey.currentState!.save();
-    Navigator.of(context).pushNamed('/home');
+
+    try {
+      UserCredential userCredential =
+          // await auth.signInAnonymously();
+          await auth.createUserWithEmailAndPassword(
+        email: "${_credentials['phoneNumber'] as String}@email.com",
+        password: _credentials['code'] as String,
+      );
+
+      print('Login: $userCredential');
+
+      Navigator.of(context).pushNamed('/home');
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        UserCredential userCredential =
+            await auth.createUserWithEmailAndPassword(
+          email: _credentials['phoneNumber'] as String,
+          password: _credentials['code'] as String,
+        );
+
+        print('Create User: ${userCredential}');
+
+        Navigator.of(context).pushNamed('/home');
+      } else if (e.code == 'wrong-password') {
+        showMyDialog(context);
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -37,59 +89,28 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 50),
                   child: Column(
                     children: [
-                      TextFormField(
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          prefixIcon: Padding(
-                            padding: EdgeInsets.all(15),
-                            child: Text('手机号:'),
-                          ),
-                          prefixStyle: TextStyle(color: Colors.black),
-                          border: OutlineInputBorder(),
-                          contentPadding: EdgeInsets.symmetric(
-                            vertical: 2,
-                            horizontal: 10,
-                          ),
-                          focusedBorder: OutlineInputBorder(),
-                        ),
-                        validator: (val) {
-                          if (val == null) {
-                            return null;
-                          }
-                          return val.length == 11 ? null : '请输入11位手机号';
+                      InputBox(
+                        title: '手机号:',
+                        onSaveHandler: (value) {
+                          _credentials['phoneNumber'] = value;
                         },
                         keyboardType: TextInputType.number,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        onSaved: (value) {
-                          print(value);
+                        validator: (val) {
+                          return val == null
+                              ? null
+                              : val.length == 11
+                                  ? null
+                                  : '请输入11位手机号';
                         },
                       ),
                       SizedBox(height: 20),
-                      TextFormField(
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          prefixIcon: Padding(
-                            padding: EdgeInsets.all(15),
-                            child: Text('验证码:'),
-                          ),
-                          prefixStyle: TextStyle(color: Colors.black),
-                          border: OutlineInputBorder(),
-                          contentPadding: EdgeInsets.symmetric(
-                            vertical: 2,
-                            horizontal: 10,
-                          ),
-                          focusedBorder: OutlineInputBorder(),
-                        ),
-                        keyboardType: TextInputType.number,
-                        onSaved: (value) {
-                          print(value);
+                      InputBox(
+                        title: '验证码:',
+                        onSaveHandler: (value) {
+                          _credentials['code'] = value;
                         },
                       ),
-                      SizedBox(
-                        height: 20,
-                      ),
+                      SizedBox(height: 20),
                       ElevatedButton(
                         child: Text('登录'),
                         onPressed: () => submitForm(context),
