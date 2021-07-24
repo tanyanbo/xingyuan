@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "871674132806",
+    "firebase_url": "https://xingyuan-3e345-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "xingyuan-3e345",
+    "storage_bucket": "xingyuan-3e345.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:871674132806:android:0789a2722c4e4c617c8d47",
+        "android_client_info": {
+          "package_name": "com.example.xingyuan"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "871674132806-7591g8onen33d2evp3uuo7gas6s6s9f3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRAxY7XIlfyMnw8QKGadc9JN9EWlk-RAg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "871674132806-7591g8onen33d2evp3uuo7gas6s6s9f3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
