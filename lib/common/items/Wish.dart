@@ -4,9 +4,13 @@ class Wish {
   String title;
   int price;
   TypeOfWish type;
-  late DateTime date;
+  bool taken;
+  bool completed;
 
-  Wish({this.title = '', this.price = 0, this.type = TypeOfWish.INFO}) {
-    this.date = DateTime.now();
-  }
+  Wish(
+      {this.title = '',
+      this.price = 0,
+      this.type = TypeOfWish.INFO,
+      this.taken = false,
+      this.completed = false});
 }

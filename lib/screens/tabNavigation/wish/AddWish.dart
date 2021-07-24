@@ -28,6 +28,8 @@ class _AddWishPageState extends State<AddWishPage> {
               ? 2
               : 3,
       'date': DateTime.now(),
+      'taken': false,
+      'completed': false,
     });
     Navigator.of(context).pushNamed('/home');
   }
@@ -99,7 +101,7 @@ class _AddWishPageState extends State<AddWishPage> {
                   },
                 ),
                 RadioListTile<TypeOfWish>(
-                  title: Text('实际行动'),
+                  title: Text('日行一善'),
                   value: TypeOfWish.ACTION,
                   groupValue: _choice,
                   onChanged: (TypeOfWish? val) {
