@@ -7,6 +7,7 @@ import 'package:xingyuan/screens/authentication/PersonalInfo.dart';
 import 'package:xingyuan/screens/tabNavigation/HomePage.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+// Start refactoring to use node.js backend
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
