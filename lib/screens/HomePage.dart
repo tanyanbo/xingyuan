@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:xingyuan/screens/tabNavigation/profile/ProfileMain.dart';
 import 'package:xingyuan/screens/tabNavigation/return/ReturnMain.dart';
+import 'package:xingyuan/screens/tabNavigation/wish/AddWish.dart';
 import 'package:xingyuan/screens/tabNavigation/wish/WishMain.dart';
 import 'package:xingyuan/screens/tabNavigation/wishingwell/WishingWellMain.dart';
 
@@ -11,13 +12,10 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-//test
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   static List<Widget> _widgetOptions = <Widget>[
-    WishMain(
-      title: '愿望专区',
-    ),
+    WishMain(title: '愿望专区'),
     WishingWellMain(),
     ReturnMain(),
     ProfileMain(),
@@ -29,8 +27,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget renderHomePage() {
     return Scaffold(
       body: _widgetOptions[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -61,6 +58,20 @@ class _HomePageState extends State<HomePage> {
         onTap: _onItemTapped,
         showUnselectedLabels: true,
       ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'WTW',
+      theme: ThemeData(
+        primaryColor: Colors.pink[200],
+      ),
+      routes: {
+        '/': (_) => renderHomePage(),
+        AddWishPage.routeName: (_) => AddWishPage(),
+      },
     );
   }
 }

@@ -1,19 +1,18 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:xingyuan/common/InputBox.dart';
+import 'package:xingyuan/screens/PersonalInfo.dart';
 
-class AuthenticationPage extends StatefulWidget {
-  const AuthenticationPage({Key? key}) : super(key: key);
+class AuthenticationPage extends StatelessWidget {
+  AuthenticationPage({Key? key}) : super(key: key);
 
-  @override
-  _AuthenticationPageState createState() => _AuthenticationPageState();
-}
-
-class _AuthenticationPageState extends State<AuthenticationPage> {
   final _formKey = GlobalKey<FormState>();
-  Map<String, String?> _credentials = {};
-  FirebaseAuth auth = FirebaseAuth.instance;
+  final Map<String, String?> _credentials = {};
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final CollectionReference users =
+      FirebaseFirestore.instance.collection('users');
 
   Future<String?> showMyDialog(BuildContext context) {
     return showCupertinoDialog<String>(
@@ -40,18 +39,24 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
 
     _formKey.currentState!.save();
 
+    QuerySnapshot<Object?> docs = await users
+        .where('phoneNumber', isEqualTo: _credentials['phoneNumber'])
+        .get();
+
+    if (docs.docs.length == 0) {
+      await Navigator.of(context).pushNamed(
+        '/info',
+      );
+      return;
+    }
+
     try {
       await auth.signInWithEmailAndPassword(
         email: "${_credentials['phoneNumber'] as String}@email.com",
         password: _credentials['code'] as String,
       );
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        await auth.createUserWithEmailAndPassword(
-          email: '${_credentials['phoneNumber'] as String}@email.com',
-          password: _credentials['code'] as String,
-        );
-      } else if (e.code == 'wrong-password') {
+      if (e.code == 'wrong-password') {
         showMyDialog(context);
       }
     } catch (e) {
