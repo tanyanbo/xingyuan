@@ -28,14 +28,11 @@ class MyApp extends StatelessWidget {
           return StreamBuilder<User?>(
             stream: auth.authStateChanges(),
             builder: (context, snapshot) {
-              print("STREAM BUILDER FUNCTION RAN");
               if (snapshot.connectionState == ConnectionState.active) {
                 final User? user = snapshot.data;
                 if (user == null) {
-                  print("RETURN AUTHENTICATION PAGE");
                   return AuthenticationPage();
                 }
-                print("RETURN HOME PAGE");
                 return HomePage();
               }
               return CircularProgressIndicator();
