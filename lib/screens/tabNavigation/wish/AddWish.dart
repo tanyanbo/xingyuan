@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:xingyuan/common/items/Wish.dart';
+import 'package:xingyuan/common/widgets/InputBox.dart';
 import 'package:xingyuan/screens/tabNavigation/wish/WishMain.dart';
 
 class AddWishPage extends StatefulWidget {
@@ -55,7 +56,16 @@ class _AddWishPageState extends State<AddWishPage> {
       appBar: AppBar(
         title: Text('添加新愿望'),
       ),
+      resizeToAvoidBottomInset: false,
       body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(
+              'assets/images/wishmain.png',
+            ),
+            fit: BoxFit.cover,
+          ),
+        ),
         child: Center(
           child: Form(
             key: _formKey,
@@ -63,38 +73,36 @@ class _AddWishPageState extends State<AddWishPage> {
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
-                  TextFormField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: '心愿',
-                    ),
-                    onSaved: (String? value) {
+                  SizedBox(height: 150),
+                  InputBox(
+                    title: '心愿',
+                    onSaveHandler: (String? value) {
                       _editedWish.title = value as String;
                     },
                     validator: (val) {
                       return val == '' ? '请输入心愿哦' : null;
                     },
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
                   ),
                   SizedBox(height: 10),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: '报酬',
-                    ),
-                    onSaved: (String? value) {
+                  InputBox(
+                    title: '报酬',
+                    onSaveHandler: (String? value) {
                       _editedWish.price = int.parse(value as String);
                     },
                     validator: (val) {
                       return val == '' ? '给别人一些报酬啊' : null;
                     },
                     keyboardType: TextInputType.number,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
                   ),
+                  SizedBox(height: 20),
                   ElevatedButton(
                     child: Text('发布'),
                     onPressed: () => submitForm(context, args),
-                    style: ElevatedButton.styleFrom(minimumSize: Size(200, 40)),
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size(200, 40),
+                      primary: Colors.white,
+                      onPrimary: Colors.black,
+                    ),
                   ),
                 ],
               ),

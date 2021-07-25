@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:xingyuan/common/InputBox.dart';
+import 'package:xingyuan/common/widgets/InputBox.dart';
 import 'package:xingyuan/screens/authentication/PersonalInfo.dart';
 
 class AuthenticationPage extends StatelessWidget {
@@ -71,6 +71,7 @@ class AuthenticationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
