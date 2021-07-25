@@ -20,15 +20,17 @@ class PersonalInfo extends StatelessWidget {
 
   void submitForm(BuildContext context, PersonalInfoArguments args) async {
     _formKey.currentState!.save();
+    await FirebaseAuth.instance
+        .createUserWithEmailAndPassword(email: args.email, password: args.code);
+
     await FirebaseFirestore.instance.collection('users').add(
       {
         'email': args.email,
         'nickname': _information['nickname'],
+        'uid': FirebaseAuth.instance.currentUser!.uid,
+        'coins': 20,
       },
     );
-
-    await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(email: args.email, password: args.code);
 
     await Navigator.of(context).pushNamed(MiddleStreamBuilder.routeName);
   }
