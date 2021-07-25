@@ -26,6 +26,11 @@ class _AddWishPageState extends State<AddWishPage> {
     }
     _formKey.currentState!.save();
 
+    final usersArray = await FirebaseFirestore.instance
+        .collection('users')
+        .where('email', isEqualTo: FirebaseAuth.instance.currentUser!.email)
+        .get();
+
     await FirebaseFirestore.instance.collection('wishes').add({
       'title': _editedWish.title,
       'price': _editedWish.price,
@@ -34,8 +39,8 @@ class _AddWishPageState extends State<AddWishPage> {
       'taken': false,
       'completed': false,
       'user': {
-        "uid": _editedWish.user["uid"],
-        "email": _editedWish.user["email"]
+        'databaseId': usersArray.docs[0].id,
+        'nickname': usersArray.docs[0]['nickname'],
       },
     });
     Navigator.of(context).pushNamed('/');

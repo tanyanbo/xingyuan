@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -143,7 +142,7 @@ class WishMain extends StatelessWidget {
                 child: ListTile(
                   title: Text(item['title']),
                   subtitle: Text(
-                      '${item['price'].toString()} 心愿币 \n发布人: ${item['user']['email'].substring(0, 11)}'),
+                      '${item['price'].toString()} 心愿币 \n发布人: ${item['user']['nickname']}'),
                   isThreeLine: true,
                   leading: Image(
                     image: AssetImage(

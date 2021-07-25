@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:xingyuan/screens/tabNavigation/profile/ProfileMain.dart';
+import 'package:xingyuan/screens/tabNavigation/return/ReturnMain.dart';
+import 'package:xingyuan/screens/tabNavigation/wish/AddWish.dart';
 import 'package:xingyuan/screens/tabNavigation/wish/WishMain.dart';
+import 'package:xingyuan/screens/tabNavigation/wishingwell/WishingWellMain.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -11,21 +14,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static List<Widget> _widgetOptions = <Widget>[
-    WishMain(
-      title: '愿望专区',
-    ),
-    Text(
-      'Index 1: Business',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 2: School',
-      style: optionStyle,
-    ),
+    WishMain(title: '愿望专区'),
+    WishingWellMain(),
+    ReturnMain(),
     ProfileMain(),
   ];
 
@@ -35,8 +27,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget renderHomePage() {
     return Scaffold(
       body: _widgetOptions[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -67,6 +58,20 @@ class _HomePageState extends State<HomePage> {
         onTap: _onItemTapped,
         showUnselectedLabels: true,
       ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'WTW',
+      theme: ThemeData(
+        primaryColor: Colors.pink[200],
+      ),
+      routes: {
+        '/': (_) => renderHomePage(),
+        AddWishPage.routeName: (_) => AddWishPage(),
+      },
     );
   }
 }
