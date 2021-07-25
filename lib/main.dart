@@ -1,10 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:xingyuan/screens/AuthenticationPage.dart';
-import 'package:xingyuan/screens/HomePage.dart';
+import 'package:xingyuan/screens/authentication/AuthenticationPage.dart';
+import 'package:xingyuan/screens/authentication/MiddleStreamBuilder.dart';
+import 'package:xingyuan/screens/authentication/PersonalInfo.dart';
+import 'package:xingyuan/screens/tabNavigation/HomePage.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:xingyuan/screens/PersonalInfo.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,16 +14,16 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  FirebaseAuth auth = FirebaseAuth.instance;
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
-  StreamBuilder<User?> authStreamBuilder(bool showInfo) {
+  StreamBuilder<User?> authStreamBuilder() {
     return StreamBuilder<User?>(
       stream: auth.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {
           final User? user = snapshot.data;
           if (user == null) {
-            return showInfo ? PersonalInfo() : AuthenticationPage();
+            return AuthenticationPage();
           }
           return HomePage();
         }
@@ -39,8 +40,9 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.pink[200],
       ),
       routes: {
-        '/': (_) => authStreamBuilder(false),
-        '/info': (_) => authStreamBuilder(true),
+        '/': (_) => authStreamBuilder(),
+        MiddleStreamBuilder.routeName: (_) => MiddleStreamBuilder(),
+        PersonalInfo.routeName: (_) => PersonalInfo(),
       },
     );
   }

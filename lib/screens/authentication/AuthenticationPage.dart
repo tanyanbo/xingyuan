@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:xingyuan/common/InputBox.dart';
-import 'package:xingyuan/screens/PersonalInfo.dart';
+import 'package:xingyuan/screens/authentication/PersonalInfo.dart';
 
 class AuthenticationPage extends StatelessWidget {
   AuthenticationPage({Key? key}) : super(key: key);
@@ -40,12 +40,16 @@ class AuthenticationPage extends StatelessWidget {
     _formKey.currentState!.save();
 
     QuerySnapshot<Object?> docs = await users
-        .where('phoneNumber', isEqualTo: _credentials['phoneNumber'])
+        .where('email', isEqualTo: '${_credentials['phoneNumber']}@email.com')
         .get();
 
     if (docs.docs.length == 0) {
-      await Navigator.of(context).pushNamed(
-        '/info',
+      Navigator.of(context).pushNamed(
+        PersonalInfo.routeName,
+        arguments: PersonalInfoArguments(
+          '${_credentials['phoneNumber']}@email.com',
+          _credentials['code'] as String,
+        ),
       );
       return;
     }
