@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:xingyuan/common/InputBox.dart';
-import 'package:xingyuan/screens/HomePage.dart';
 
 class AuthenticationPage extends StatefulWidget {
   const AuthenticationPage({Key? key}) : super(key: key);
@@ -60,7 +59,8 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     }
   }
 
-  Widget renderAuthenticationPage() {
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -118,25 +118,6 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
           mainAxisAlignment: MainAxisAlignment.center,
         ),
       ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<User?>(
-      stream: auth.authStateChanges(),
-      builder: (context, snapshot) {
-        print('ran');
-        if (snapshot.connectionState == ConnectionState.active) {
-          final User? user = snapshot.data;
-          if (user == null) {
-            print('logout successfully');
-            return renderAuthenticationPage();
-          }
-          return HomePage();
-        }
-        return CircularProgressIndicator();
-      },
     );
   }
 }

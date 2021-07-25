@@ -59,13 +59,6 @@ class WishMain extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('WTW'),
-        actions: [
-          TextButton(
-              onPressed: () {
-                FirebaseAuth.instance.signOut();
-              },
-              child: Text('logout'))
-        ],
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -150,7 +143,7 @@ class WishMain extends StatelessWidget {
                 child: ListTile(
                   title: Text(item['title']),
                   subtitle: Text(
-                      '${item['price'].toString()} 心愿币 \n发布人: ${item['user'].substring(0, 11)}'),
+                      '${item['price'].toString()} 心愿币 \n发布人: ${item['user']['email'].substring(0, 11)}'),
                   isThreeLine: true,
                   leading: Image(
                     image: AssetImage(

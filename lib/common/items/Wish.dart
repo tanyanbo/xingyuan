@@ -6,7 +6,7 @@ class Wish {
   TypeOfWish type;
   bool taken;
   bool completed;
-  String user;
+  Map<String, String?> user;
 
   Wish(
       {this.title = '',

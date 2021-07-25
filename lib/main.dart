@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:xingyuan/screens/AuthenticationPage.dart';
 import 'package:xingyuan/screens/HomePage.dart';
@@ -12,6 +13,8 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
+  FirebaseAuth auth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -20,8 +23,25 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.pink[200],
       ),
       routes: {
-        '/': (_) => AuthenticationPage(),
-        HomePage.routeName: (_) => HomePage(),
+        '/': (_) {
+          // WHEN NAVIGATING TO HOME PAGE, REMEMBER TO PUSH '/' ROUTE
+          return StreamBuilder<User?>(
+            stream: auth.authStateChanges(),
+            builder: (context, snapshot) {
+              print("STREAM BUILDER FUNCTION RAN");
+              if (snapshot.connectionState == ConnectionState.active) {
+                final User? user = snapshot.data;
+                if (user == null) {
+                  print("RETURN AUTHENTICATION PAGE");
+                  return AuthenticationPage();
+                }
+                print("RETURN HOME PAGE");
+                return HomePage();
+              }
+              return CircularProgressIndicator();
+            },
+          );
+        },
         AddWishPage.routeName: (_) => AddWishPage(),
       },
     );

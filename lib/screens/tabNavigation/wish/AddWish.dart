@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:xingyuan/common/items/Wish.dart';
-import 'package:xingyuan/screens/HomePage.dart';
 import 'package:xingyuan/screens/tabNavigation/wish/WishMain.dart';
 
 class AddWishPage extends StatefulWidget {
@@ -16,7 +15,10 @@ class AddWishPage extends StatefulWidget {
 
 class _AddWishPageState extends State<AddWishPage> {
   final _formKey = GlobalKey<FormState>();
-  Wish _editedWish = Wish(user: FirebaseAuth.instance.currentUser!.uid);
+  Wish _editedWish = Wish(user: {
+    "uid": FirebaseAuth.instance.currentUser!.uid,
+    "email": FirebaseAuth.instance.currentUser!.email
+  });
 
   void submitForm(BuildContext context, WishMainArguments args) async {
     if (!_formKey.currentState!.validate()) {
@@ -31,9 +33,12 @@ class _AddWishPageState extends State<AddWishPage> {
       'date': DateTime.now(),
       'taken': false,
       'completed': false,
-      'user': _editedWish.user,
+      'user': {
+        "uid": _editedWish.user["uid"],
+        "email": _editedWish.user["email"]
+      },
     });
-    Navigator.of(context).pushReplacementNamed(HomePage.routeName);
+    Navigator.of(context).pushNamed('/');
   }
 
   @override
@@ -47,49 +52,50 @@ class _AddWishPageState extends State<AddWishPage> {
       ),
       body: Container(
         child: Center(
-            child: Form(
-          key: _formKey,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                TextFormField(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: '心愿',
+          child: Form(
+            key: _formKey,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  TextFormField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: '心愿',
+                    ),
+                    onSaved: (String? value) {
+                      _editedWish.title = value as String;
+                    },
+                    validator: (val) {
+                      return val == '' ? '请输入心愿哦' : null;
+                    },
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                   ),
-                  onSaved: (String? value) {
-                    _editedWish.title = value as String;
-                  },
-                  validator: (val) {
-                    return val == '' ? '请输入心愿哦' : null;
-                  },
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: '报酬',
+                  SizedBox(height: 10),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: '报酬',
+                    ),
+                    onSaved: (String? value) {
+                      _editedWish.price = int.parse(value as String);
+                    },
+                    validator: (val) {
+                      return val == '' ? '给别人一些报酬啊' : null;
+                    },
+                    keyboardType: TextInputType.number,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                   ),
-                  onSaved: (String? value) {
-                    _editedWish.price = int.parse(value as String);
-                  },
-                  validator: (val) {
-                    return val == '' ? '给别人一些报酬啊' : null;
-                  },
-                  keyboardType: TextInputType.number,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                ),
-                ElevatedButton(
-                  child: Text('发布'),
-                  onPressed: () => submitForm(context, args),
-                  style: ElevatedButton.styleFrom(minimumSize: Size(200, 40)),
-                ),
-              ],
+                  ElevatedButton(
+                    child: Text('发布'),
+                    onPressed: () => submitForm(context, args),
+                    style: ElevatedButton.styleFrom(minimumSize: Size(200, 40)),
+                  ),
+                ],
+              ),
             ),
           ),
-        )),
+        ),
       ),
     );
   }
