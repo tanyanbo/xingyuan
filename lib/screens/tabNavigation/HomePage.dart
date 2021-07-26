@@ -16,7 +16,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   static List<Widget> _widgetOptions = <Widget>[
-    WishMain(title: '愿望专区'),
+    WishMain(),
     WishingWellMain(),
     ReturnMain(),
     ProfileMain(),

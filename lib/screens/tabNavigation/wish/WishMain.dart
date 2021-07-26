@@ -1,6 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart' as http;
+import 'package:xingyuan/common/api.dart';
 
 import 'AddWish.dart';
 
@@ -10,13 +14,34 @@ class WishMainArguments {
   WishMainArguments(this.type);
 }
 
-class WishMain extends StatelessWidget {
-  final String title;
+class WishMain extends StatefulWidget {
+  WishMain({Key? key}) : super(key: key);
 
-  WishMain({Key? key, required this.title}) : super(key: key);
+  @override
+  _WishMainState createState() => _WishMainState();
+}
 
-  final CollectionReference wishes =
-      FirebaseFirestore.instance.collection('wishes');
+class _WishMainState extends State<WishMain> {
+  var wishes = [];
+
+  @override
+  void initState() {
+    super.initState();
+    final getWishUrl = Uri.parse('$BASE_URL/wish');
+    http.get(
+      getWishUrl,
+      headers: {
+        HttpHeaders.contentTypeHeader: 'application/json',
+        HttpHeaders.authorizationHeader: accessToken,
+      },
+    ).then((res) {
+      // final parsed = Map<String, dynamic>.from(jsonDecode(res.body));
+      final parsed = jsonDecode(res.body);
+      setState(() {
+        wishes = parsed['data'];
+      });
+    });
+  }
 
   Future<String?> showMyDialog(BuildContext context, String id) {
     return showCupertinoDialog<String>(
@@ -34,16 +59,16 @@ class WishMain extends StatelessWidget {
             ),
             TextButton(
               onPressed: () async {
-                DocumentSnapshot doc = await wishes.doc(id).get();
-                if (doc['taken']) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text("来晚了...已经有人替TA完成心愿啦"),
-                  ));
-                  Navigator.pop(context, 'OK');
-                  return;
-                }
-                await wishes.doc(id).update({'taken': true});
-                Navigator.pop(context, 'OK');
+                // DocumentSnapshot doc = await wishes.doc(id).get();
+                // if (doc['taken']) {
+                //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                //     content: Text("来晚了...已经有人替TA完成心愿啦"),
+                //   ));
+                //   Navigator.pop(context, 'OK');
+                //   return;
+                // }
+                // await wishes.doc(id).update({'taken': true});
+                // Navigator.pop(context, 'OK');
               },
               child: const Text('帮TA!'),
             ),
@@ -68,27 +93,12 @@ class WishMain extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        child: StreamBuilder(
-          stream: FirebaseFirestore.instance
-              .collection('/wishes')
-              .where('taken', isEqualTo: false)
-              .where('completed', isEqualTo: false)
-              .snapshots(),
-          builder: streamBuilder,
-        ),
+        child: renderList(),
       ),
     );
   }
 
-  Widget streamBuilder(BuildContext context,
-      AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
-    if (snapshot.connectionState == ConnectionState.waiting ||
-        !snapshot.hasData ||
-        snapshot.hasError) {
-      return Center(
-        child: CircularProgressIndicator(),
-      );
-    }
+  Widget renderList() {
     return Column(
       children: [
         SizedBox(height: 150),
@@ -134,10 +144,9 @@ class WishMain extends StatelessWidget {
         ),
         Flexible(
           child: ListView.builder(
-            itemCount: snapshot.requireData.docs.length,
+            itemCount: wishes.length,
             itemBuilder: (BuildContext context, int index) {
-              QueryDocumentSnapshot<Map<String, dynamic>> item =
-                  snapshot.requireData.docs[index];
+              Map<String, dynamic> item = wishes[index];
               return Card(
                 child: ListTile(
                   title: Text(item['title']),
@@ -151,7 +160,7 @@ class WishMain extends StatelessWidget {
                   trailing: TextButton(
                     child: Text('我要帮TA！'),
                     onPressed: () {
-                      showMyDialog(context, item.id);
+                      showMyDialog(context, item['id']);
                     },
                   ),
                   tileColor: Colors.white,
