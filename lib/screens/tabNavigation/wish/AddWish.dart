@@ -1,50 +1,44 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:xingyuan/common/items/Wish.dart';
+import 'package:xingyuan/common/api.dart';
+import 'package:http/http.dart' as http;
 import 'package:xingyuan/common/widgets/InputBox.dart';
+import 'package:xingyuan/screens/tabNavigation/HomePage.dart';
 import 'package:xingyuan/screens/tabNavigation/wish/WishMain.dart';
 
-class AddWishPage extends StatefulWidget {
+class AddWishPage extends StatelessWidget {
   AddWishPage({Key? key}) : super(key: key);
 
   static const routeName = '/addWish';
 
-  @override
-  _AddWishPageState createState() => _AddWishPageState();
-}
-
-class _AddWishPageState extends State<AddWishPage> {
   final _formKey = GlobalKey<FormState>();
-  Wish _editedWish = Wish(user: {
-    "uid": FirebaseAuth.instance.currentUser!.uid,
-    "email": FirebaseAuth.instance.currentUser!.email
-  });
+  final _info = {};
 
   void submitForm(BuildContext context, WishMainArguments args) async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
     _formKey.currentState!.save();
+    final Uri addWishUrl = Uri.parse('$BASE_URL/wish');
 
-    final usersArray = await FirebaseFirestore.instance
-        .collection('users')
-        .where('email', isEqualTo: FirebaseAuth.instance.currentUser!.email)
-        .get();
-
-    await FirebaseFirestore.instance.collection('wishes').add({
-      'title': _editedWish.title,
-      'price': _editedWish.price,
-      'type': args.type,
-      'date': DateTime.now(),
-      'taken': false,
-      'completed': false,
-      'user': {
-        'databaseId': usersArray.docs[0].id,
-        'nickname': usersArray.docs[0]['nickname'],
+    await http.post(
+      addWishUrl,
+      body: json.encode({
+        "title": _info['title'],
+        "price": _info['price'],
+        "type": args.type,
+        "date": DateTime.now().toUtc().millisecondsSinceEpoch,
+        "taken": false,
+        "completed": false,
+      }),
+      headers: {
+        HttpHeaders.contentTypeHeader: 'application/json',
+        HttpHeaders.authorizationHeader: accessToken,
       },
-    });
-    Navigator.of(context).pushNamed('/');
+    );
+    Navigator.of(context).pushReplacementNamed(HomePage.routeName);
   }
 
   @override
@@ -77,7 +71,7 @@ class _AddWishPageState extends State<AddWishPage> {
                   InputBox(
                     title: '心愿',
                     onSaveHandler: (String? value) {
-                      _editedWish.title = value as String;
+                      _info['title'] = value as String;
                     },
                     validator: (val) {
                       return val == '' ? '请输入心愿哦' : null;
@@ -87,7 +81,7 @@ class _AddWishPageState extends State<AddWishPage> {
                   InputBox(
                     title: '报酬',
                     onSaveHandler: (String? value) {
-                      _editedWish.price = int.parse(value as String);
+                      _info['price'] = int.parse(value as String);
                     },
                     validator: (val) {
                       return val == '' ? '给别人一些报酬啊' : null;

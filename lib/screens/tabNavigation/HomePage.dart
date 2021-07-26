@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xingyuan/screens/tabNavigation/profile/ProfileMain.dart';
 import 'package:xingyuan/screens/tabNavigation/return/ReturnMain.dart';
-import 'package:xingyuan/screens/tabNavigation/wish/AddWish.dart';
 import 'package:xingyuan/screens/tabNavigation/wish/WishMain.dart';
 import 'package:xingyuan/screens/tabNavigation/wishingwell/WishingWellMain.dart';
 

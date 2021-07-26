@@ -4,6 +4,7 @@ import 'package:xingyuan/screens/authentication/AuthenticationPage.dart';
 import 'package:xingyuan/screens/authentication/PersonalInfo.dart';
 import 'package:xingyuan/screens/tabNavigation/HomePage.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:xingyuan/screens/tabNavigation/wish/AddWish.dart';
 
 // Start refactoring to use node.js backend
 Future<void> main() async {
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
         AuthenticationPage.routeName: (_) => AuthenticationPage(),
         PersonalInfo.routeName: (_) => PersonalInfo(),
         HomePage.routeName: (_) => HomePage(),
+        AddWishPage.routeName: (_) => AddWishPage(),
       },
     );
   }
