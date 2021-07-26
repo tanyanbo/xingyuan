@@ -1,15 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:xingyuan/common/widgets/InputBox.dart';
-import 'package:xingyuan/screens/authentication/MiddleStreamBuilder.dart';
-
-class PersonalInfoArguments {
-  String email;
-  String code;
-
-  PersonalInfoArguments(this.email, this.code);
-}
+import 'package:xingyuan/screens/tabNavigation/HomePage.dart';
 
 class PersonalInfo extends StatelessWidget {
   PersonalInfo({Key? key}) : super(key: key);
@@ -18,28 +9,12 @@ class PersonalInfo extends StatelessWidget {
 
   static const routeName = '/info';
 
-  void submitForm(BuildContext context, PersonalInfoArguments args) async {
-    _formKey.currentState!.save();
-    await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(email: args.email, password: args.code);
-
-    await FirebaseFirestore.instance.collection('users').add(
-      {
-        'email': args.email,
-        'nickname': _information['nickname'],
-        'uid': FirebaseAuth.instance.currentUser!.uid,
-        'coins': 20,
-      },
-    );
-
-    await Navigator.of(context).pushNamed(MiddleStreamBuilder.routeName);
+  void submitForm(BuildContext context) async {
+    await Navigator.of(context).pushNamed(HomePage.routeName);
   }
 
   @override
   Widget build(BuildContext context) {
-    final args =
-        ModalRoute.of(context)!.settings.arguments as PersonalInfoArguments;
-
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -66,7 +41,7 @@ class PersonalInfo extends StatelessWidget {
                       SizedBox(height: 20),
                       ElevatedButton(
                         child: Text('进入WTW！'),
-                        onPressed: () => submitForm(context, args),
+                        onPressed: () => submitForm(context),
                         style: ElevatedButton.styleFrom(
                           minimumSize: Size(200, 40),
                           primary: Colors.white,

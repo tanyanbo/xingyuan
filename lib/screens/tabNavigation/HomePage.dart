@@ -7,6 +7,7 @@ import 'package:xingyuan/screens/tabNavigation/wishingwell/WishingWellMain.dart'
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
+  static const routeName = '/home';
 
   @override
   _HomePageState createState() => _HomePageState();

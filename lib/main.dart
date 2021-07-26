@@ -44,6 +44,7 @@ class MyApp extends StatelessWidget {
         '/': (_) => authStreamBuilder(),
         MiddleStreamBuilder.routeName: (_) => MiddleStreamBuilder(),
         PersonalInfo.routeName: (_) => PersonalInfo(),
+        HomePage.routeName: (_) => HomePage(),
       },
     );
   }

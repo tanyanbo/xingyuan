@@ -1,9 +1,16 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:xingyuan/common/api.dart';
 import 'package:xingyuan/common/widgets/InputBox.dart';
-import 'package:xingyuan/screens/authentication/PersonalInfo.dart';
+import 'package:http/http.dart' as http;
+import 'package:xingyuan/screens/tabNavigation/HomePage.dart';
+import 'dart:convert';
+
+import 'PersonalInfo.dart';
 
 class AuthenticationPage extends StatelessWidget {
   AuthenticationPage({Key? key}) : super(key: key);
@@ -39,32 +46,22 @@ class AuthenticationPage extends StatelessWidget {
 
     _formKey.currentState!.save();
 
-    QuerySnapshot<Object?> docs = await users
-        .where('email', isEqualTo: '${_credentials['phoneNumber']}@email.com')
-        .get();
+    final Uri signInUrl = Uri.parse('$BASE_URL/signin');
 
-    if (docs.docs.length == 0) {
-      Navigator.of(context).pushNamed(
-        PersonalInfo.routeName,
-        arguments: PersonalInfoArguments(
-          '${_credentials['phoneNumber']}@email.com',
-          _credentials['code'] as String,
-        ),
-      );
-      return;
-    }
+    final http.Response res = await http.post(
+      signInUrl,
+      body: json.encode({
+        "phone": _credentials['phoneNumber'],
+        "code": _credentials['code'],
+      }),
+      headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+    );
+    final parsed = jsonDecode(res.body) as Map<String, dynamic>;
 
-    try {
-      await auth.signInWithEmailAndPassword(
-        email: "${_credentials['phoneNumber'] as String}@email.com",
-        password: _credentials['code'] as String,
-      );
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'wrong-password') {
-        showMyDialog(context);
-      }
-    } catch (e) {
-      print(e);
+    if (parsed["isNewUser"]) {
+      await Navigator.of(context).pushNamed(PersonalInfo.routeName);
+    } else {
+      await Navigator.of(context).pushNamed(HomePage.routeName);
     }
   }
 
