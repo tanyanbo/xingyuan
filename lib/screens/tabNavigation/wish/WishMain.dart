@@ -35,11 +35,12 @@ class _WishMainState extends State<WishMain> {
         HttpHeaders.authorizationHeader: accessToken,
       },
     ).then((res) {
-      // final parsed = Map<String, dynamic>.from(jsonDecode(res.body));
       final parsed = jsonDecode(res.body);
-      setState(() {
-        wishes = parsed['data'];
-      });
+      if (mounted) {
+        setState(() {
+          wishes = parsed['data'];
+        });
+      }
     });
   }
 

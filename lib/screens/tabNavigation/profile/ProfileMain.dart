@@ -18,6 +18,28 @@ class _ProfileMainState extends State<ProfileMain> {
   int coins = 0;
 
   @override
+  void initState() {
+    super.initState();
+    final Uri getInfoUrl = Uri.parse('$BASE_URL/info');
+    print(getInfoUrl);
+
+    http.get(
+      getInfoUrl,
+      headers: {
+        HttpHeaders.contentTypeHeader: 'application/json',
+        HttpHeaders.authorizationHeader: accessToken,
+      },
+    ).then((res) {
+      final parsed = jsonDecode(res.body) as Map<String, dynamic>;
+      final data = parsed['data'];
+      setState(() {
+        nickname = data['nickname'];
+        coins = data['coins'];
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
