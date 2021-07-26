@@ -37,8 +37,11 @@ class _WishMainState extends State<WishMain> {
     ).then((res) {
       final parsed = jsonDecode(res.body);
       if (mounted) {
+        final data = parsed['data'].where((wish) {
+          return wish['taken'] == false;
+        }).toList();
         setState(() {
-          wishes = parsed['data'];
+          wishes = data;
         });
       }
     });
@@ -60,16 +63,21 @@ class _WishMainState extends State<WishMain> {
             ),
             TextButton(
               onPressed: () async {
-                // DocumentSnapshot doc = await wishes.doc(id).get();
-                // if (doc['taken']) {
-                //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                //     content: Text("来晚了...已经有人替TA完成心愿啦"),
-                //   ));
-                //   Navigator.pop(context, 'OK');
-                //   return;
-                // }
-                // await wishes.doc(id).update({'taken': true});
-                // Navigator.pop(context, 'OK');
+                final Uri updateWishUrl = Uri.parse('$BASE_URL/wish');
+
+                await http.put(
+                  updateWishUrl,
+                  body: json.encode({
+                    "wishId": id,
+                    "taken": true,
+                  }),
+                  headers: {
+                    HttpHeaders.contentTypeHeader: 'application/json',
+                    HttpHeaders.authorizationHeader: accessToken,
+                  },
+                );
+
+                Navigator.pop(context, 'Ok');
               },
               child: const Text('帮TA!'),
             ),

@@ -8,18 +8,28 @@ import 'package:xingyuan/common/widgets/InputBox.dart';
 import 'package:xingyuan/screens/tabNavigation/HomePage.dart';
 import 'package:xingyuan/screens/tabNavigation/wish/WishMain.dart';
 
-class AddWishPage extends StatelessWidget {
+class AddWishPage extends StatefulWidget {
   AddWishPage({Key? key}) : super(key: key);
 
   static const routeName = '/addWish';
 
+  @override
+  _AddWishPageState createState() => _AddWishPageState();
+}
+
+class _AddWishPageState extends State<AddWishPage> {
   final _formKey = GlobalKey<FormState>();
+
   final _info = {};
+  bool isDisabled = false;
 
   void submitForm(BuildContext context, WishMainArguments args) async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
+    setState(() {
+      isDisabled = true;
+    });
     _formKey.currentState!.save();
     final Uri addWishUrl = Uri.parse('$BASE_URL/wish');
 
@@ -38,7 +48,10 @@ class AddWishPage extends StatelessWidget {
         HttpHeaders.authorizationHeader: accessToken,
       },
     );
-    Navigator.of(context).pushReplacementNamed(HomePage.routeName);
+    setState(() {
+      isDisabled = false;
+    });
+    await Navigator.of(context).pushReplacementNamed(HomePage.routeName);
   }
 
   @override
@@ -91,7 +104,8 @@ class AddWishPage extends StatelessWidget {
                   SizedBox(height: 20),
                   ElevatedButton(
                     child: Text('发布'),
-                    onPressed: () => submitForm(context, args),
+                    onPressed:
+                        isDisabled ? null : () => submitForm(context, args),
                     style: ElevatedButton.styleFrom(
                       minimumSize: Size(200, 40),
                       primary: Colors.white,

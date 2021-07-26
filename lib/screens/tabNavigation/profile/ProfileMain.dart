@@ -17,6 +17,8 @@ class _ProfileMainState extends State<ProfileMain> {
   String nickname = '';
   int coins = 0;
 
+  bool isLoggingOut = false;
+
   @override
   void initState() {
     super.initState();
@@ -32,10 +34,12 @@ class _ProfileMainState extends State<ProfileMain> {
     ).then((res) {
       final parsed = jsonDecode(res.body) as Map<String, dynamic>;
       final data = parsed['data'];
-      setState(() {
-        nickname = data['nickname'];
-        coins = data['coins'];
-      });
+      if (mounted) {
+        setState(() {
+          nickname = data['nickname'];
+          coins = data['coins'];
+        });
+      }
     });
   }
 
@@ -51,90 +55,96 @@ class _ProfileMainState extends State<ProfileMain> {
             fit: BoxFit.cover,
           ),
         ),
-        child: Center(
-          child: Column(
-            children: [
-              SizedBox(height: 30),
-              Row(
-                children: [
-                  const Icon(
-                    Icons.person,
-                    size: 80,
-                    color: Colors.black54,
-                  ),
-                  SizedBox(width: 30),
-                  Column(
-                    children: [
-                      Text(
-                        nickname.isEmpty ? '' : nickname,
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+        child: isLoggingOut
+            ? Center(child: CircularProgressIndicator())
+            : Center(
+                child: Column(
+                  children: [
+                    SizedBox(height: 100),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.person,
+                          size: 80,
+                          color: Colors.black54,
+                        ),
+                        SizedBox(width: 30),
+                        Column(
+                          children: [
+                            Text(
+                              nickname.isEmpty ? '' : nickname,
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            Text('${nickname.isEmpty ? '' : coins} 心愿币'),
+                          ],
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                        ),
+                      ],
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                    ),
+                    SizedBox(
+                      height: 10,
+                      width: MediaQuery.of(context).size.width,
+                      child: DecoratedBox(
+                        decoration: const BoxDecoration(
+                          color: Colors.black12,
                         ),
                       ),
-                      SizedBox(height: 10),
-                      Text('${nickname.isEmpty ? '' : coins} 心愿币'),
-                    ],
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                  ),
-                ],
-                crossAxisAlignment: CrossAxisAlignment.center,
-              ),
-              SizedBox(
-                height: 10,
-                width: MediaQuery.of(context).size.width,
-                child: DecoratedBox(
-                  decoration: const BoxDecoration(
-                    color: Colors.black12,
-                  ),
+                    ),
+                    ProfileButton(
+                      onPressHandler: () {},
+                      icon: Icons.favorite,
+                      iconColor: Colors.pink,
+                      text: '我的心愿',
+                    ),
+                    ProfileButton(
+                      onPressHandler: () {},
+                      icon: Icons.volunteer_activism,
+                      text: '我完成的心愿',
+                    ),
+                    ProfileButton(
+                      onPressHandler: () {},
+                      icon: Icons.monetization_on,
+                      text: '购买',
+                    ),
+                    ProfileButton(
+                      onPressHandler: () {},
+                      icon: Icons.card_giftcard,
+                      text: '兑换',
+                    ),
+                    SizedBox(
+                      height: 10,
+                      width: MediaQuery.of(context).size.width,
+                      child: DecoratedBox(
+                        decoration: const BoxDecoration(
+                          color: Colors.black12,
+                        ),
+                      ),
+                    ),
+                    ProfileButton(
+                      onPressHandler: () {
+                        final signOutUrl = Uri.parse('$BASE_URL/signout');
+                        http.get(signOutUrl, headers: {
+                          HttpHeaders.contentTypeHeader: 'application/json',
+                          HttpHeaders.authorizationHeader: accessToken,
+                        }).then((value) {
+                          Navigator.of(context).pushReplacementNamed(
+                              AuthenticationPage.routeName);
+                        });
+                        setState(() {
+                          isLoggingOut = true;
+                        });
+                      },
+                      icon: Icons.exit_to_app,
+                      text: '退出',
+                    )
+                  ],
                 ),
               ),
-              ProfileButton(
-                onPressHandler: () {},
-                icon: Icons.favorite,
-                iconColor: Colors.pink,
-                text: '我的心愿',
-              ),
-              ProfileButton(
-                onPressHandler: () {},
-                icon: Icons.volunteer_activism,
-                text: '我完成的心愿',
-              ),
-              ProfileButton(
-                onPressHandler: () {},
-                icon: Icons.monetization_on,
-                text: '购买',
-              ),
-              ProfileButton(
-                onPressHandler: () {},
-                icon: Icons.card_giftcard,
-                text: '兑换',
-              ),
-              SizedBox(
-                height: 10,
-                width: MediaQuery.of(context).size.width,
-                child: DecoratedBox(
-                  decoration: const BoxDecoration(
-                    color: Colors.black12,
-                  ),
-                ),
-              ),
-              ProfileButton(
-                onPressHandler: () async {
-                  final signOutUrl = Uri.parse('$BASE_URL/signout');
-                  await http.get(signOutUrl, headers: {
-                    HttpHeaders.contentTypeHeader: 'application/json',
-                    HttpHeaders.authorizationHeader: accessToken,
-                  });
-                  await Navigator.of(context)
-                      .pushReplacementNamed(AuthenticationPage.routeName);
-                },
-                icon: Icons.exit_to_app,
-                text: '退出',
-              )
-            ],
-          ),
-        ),
       ),
     );
   }
