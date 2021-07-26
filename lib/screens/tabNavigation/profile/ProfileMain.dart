@@ -1,7 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:xingyuan/common/api.dart';
+import 'package:xingyuan/screens/authentication/AuthenticationPage.dart';
 import 'package:xingyuan/screens/tabNavigation/profile/widgets/ProfileButton.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:io';
 
 class ProfileMain extends StatefulWidget {
   const ProfileMain({Key? key}) : super(key: key);
@@ -11,25 +14,8 @@ class ProfileMain extends StatefulWidget {
 }
 
 class _ProfileMainState extends State<ProfileMain> {
-  final FirebaseAuth auth = FirebaseAuth.instance;
   String nickname = '';
   int coins = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    FirebaseFirestore.instance
-        .collection('users')
-        .where('uid', isEqualTo: auth.currentUser!.uid)
-        .get()
-        .then((res) {
-      final QuerySnapshot<Map<String, dynamic>> usersArray = res;
-      setState(() {
-        nickname = usersArray.docs.first.get('nickname');
-        coins = usersArray.docs.first.get('coins');
-      });
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,8 +99,13 @@ class _ProfileMainState extends State<ProfileMain> {
               ),
               ProfileButton(
                 onPressHandler: () async {
-                  await FirebaseAuth.instance.signOut();
-                  print(FirebaseAuth.instance.currentUser);
+                  final signOutUrl = Uri.parse('$BASE_URL/signout');
+                  await http.get(signOutUrl, headers: {
+                    HttpHeaders.contentTypeHeader: 'application/json',
+                    HttpHeaders.authorizationHeader: accessToken,
+                  });
+                  await Navigator.of(context)
+                      .pushReplacementNamed(AuthenticationPage.routeName);
                 },
                 icon: Icons.exit_to_app,
                 text: '退出',

@@ -28,7 +28,8 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Widget renderHomePage() {
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: _widgetOptions[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -59,20 +60,6 @@ class _HomePageState extends State<HomePage> {
         onTap: _onItemTapped,
         showUnselectedLabels: true,
       ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'WTW',
-      theme: ThemeData(
-        primaryColor: Colors.pink[200],
-      ),
-      routes: {
-        '/': (_) => renderHomePage(),
-        AddWishPage.routeName: (_) => AddWishPage(),
-      },
     );
   }
 }
