@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:xingyuan/common/UserStore.dart';
+import 'package:xingyuan/common/routes.dart';
 
 import 'AddWish.dart';
 
@@ -27,7 +28,6 @@ class _WishMainState extends State<WishMain> {
   @override
   void initState() {
     super.initState();
-    final getWishUrl = Uri.parse('$BASE_URL/wish');
     http.get(
       getWishUrl,
       headers: {
@@ -63,8 +63,6 @@ class _WishMainState extends State<WishMain> {
             ),
             TextButton(
               onPressed: () async {
-                final Uri updateWishUrl = Uri.parse('$BASE_URL/wish');
-
                 await http.put(
                   updateWishUrl,
                   body: json.encode({

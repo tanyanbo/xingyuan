@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:xingyuan/common/UserStore.dart';
 import 'package:http/http.dart' as http;
+import 'package:xingyuan/common/routes.dart';
 import 'package:xingyuan/common/widgets/InputBox.dart';
 import 'package:xingyuan/screens/tabNavigation/HomePage.dart';
 import 'package:xingyuan/screens/tabNavigation/wish/WishMain.dart';
@@ -31,7 +32,6 @@ class _AddWishPageState extends State<AddWishPage> {
       isDisabled = true;
     });
     _formKey.currentState!.save();
-    final Uri addWishUrl = Uri.parse('$BASE_URL/wish');
 
     await http.post(
       addWishUrl,

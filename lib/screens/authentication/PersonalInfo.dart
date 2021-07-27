@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:xingyuan/common/UserStore.dart';
+import 'package:xingyuan/common/routes.dart';
 import 'package:xingyuan/common/widgets/InputBox.dart';
 import 'package:xingyuan/screens/tabNavigation/HomePage.dart';
 import 'package:http/http.dart' as http;
@@ -18,8 +19,6 @@ class _PersonalInfoState extends State<PersonalInfo> {
   final _formKey = GlobalKey<FormState>();
 
   final Map<String, String?> _information = {};
-
-  final nicknameUrl = Uri.parse('$BASE_URL/nickname');
 
   bool isLoading = false;
 

@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:xingyuan/common/UserStore.dart';
+import 'package:xingyuan/common/routes.dart';
 import 'package:xingyuan/common/widgets/InputBox.dart';
 import 'package:http/http.dart' as http;
 import 'package:xingyuan/screens/tabNavigation/HomePage.dart';
@@ -49,7 +50,6 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
         });
         return;
       }
-      final Uri infoUrl = Uri.parse('$BASE_URL/info');
 
       http.get(
         infoUrl,
@@ -94,8 +94,6 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     });
 
     _formKey.currentState!.save();
-
-    final Uri signInUrl = Uri.parse('$BASE_URL/signin');
 
     http.post(
       signInUrl,

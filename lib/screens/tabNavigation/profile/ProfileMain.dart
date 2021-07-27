@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:xingyuan/common/UserStore.dart';
+import 'package:xingyuan/common/routes.dart';
 import 'package:xingyuan/screens/authentication/AuthenticationPage.dart';
 import 'package:xingyuan/screens/tabNavigation/profile/widgets/ProfileButton.dart';
 import 'package:http/http.dart' as http;
@@ -102,7 +103,6 @@ class _ProfileMainState extends State<ProfileMain> {
                     ProfileButton(
                       onPressHandler: () {
                         final storage = new FlutterSecureStorage();
-                        final signOutUrl = Uri.parse('$BASE_URL/signout');
                         http.get(signOutUrl, headers: {
                           HttpHeaders.contentTypeHeader: 'application/json',
                           HttpHeaders.authorizationHeader:
