@@ -1,5 +1,3 @@
-const BASE_URL = 'https://murmuring-river-82645.herokuapp.com';
-
 class UserStore {
   String nickname = '';
   int coins = 0;
@@ -25,5 +23,3 @@ class UserStore {
     return _userInfo;
   }
 }
-
-String accessToken = '';
