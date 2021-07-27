@@ -1,7 +1,6 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:xingyuan/common/api.dart';
+import 'package:xingyuan/common/UserStore.dart';
 import 'package:xingyuan/common/widgets/InputBox.dart';
 import 'package:xingyuan/screens/tabNavigation/HomePage.dart';
 import 'package:http/http.dart' as http;
@@ -31,16 +30,20 @@ class _PersonalInfoState extends State<PersonalInfo> {
 
     _formKey.currentState!.save();
     try {
-      await http.post(
+      http.post(
         nicknameUrl,
         body: json.encode({
           "nickname": _information['nickname'],
         }),
         headers: {
           HttpHeaders.contentTypeHeader: 'application/json',
-          HttpHeaders.authorizationHeader: accessToken
+          HttpHeaders.authorizationHeader: UserStore().accessToken
         },
-      );
+      ).then((res) {
+        final parsed = jsonDecode(res.body) as Map<String, dynamic>;
+        final data = parsed['data'];
+        UserStore(nickname: data['nickname'], coins: data['coins']);
+      });
     } catch (e) {
       return;
     }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:xingyuan/common/api.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:xingyuan/common/UserStore.dart';
 import 'package:xingyuan/screens/authentication/AuthenticationPage.dart';
 import 'package:xingyuan/screens/tabNavigation/profile/widgets/ProfileButton.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'dart:io';
 
 class ProfileMain extends StatefulWidget {
@@ -14,37 +14,11 @@ class ProfileMain extends StatefulWidget {
 }
 
 class _ProfileMainState extends State<ProfileMain> {
-  String nickname = '';
-  int coins = 0;
-
   bool isLoggingOut = false;
 
   @override
-  void initState() {
-    super.initState();
-    final Uri getInfoUrl = Uri.parse('$BASE_URL/info');
-    print(getInfoUrl);
-
-    http.get(
-      getInfoUrl,
-      headers: {
-        HttpHeaders.contentTypeHeader: 'application/json',
-        HttpHeaders.authorizationHeader: accessToken,
-      },
-    ).then((res) {
-      final parsed = jsonDecode(res.body) as Map<String, dynamic>;
-      final data = parsed['data'];
-      if (mounted) {
-        setState(() {
-          nickname = data['nickname'];
-          coins = data['coins'];
-        });
-      }
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    UserStore userStore = UserStore();
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -72,14 +46,14 @@ class _ProfileMainState extends State<ProfileMain> {
                         Column(
                           children: [
                             Text(
-                              nickname.isEmpty ? '' : nickname,
+                              userStore.nickname,
                               style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             SizedBox(height: 10),
-                            Text('${nickname.isEmpty ? '' : coins} 心愿币'),
+                            Text('${userStore.coins} 心愿币'),
                           ],
                           crossAxisAlignment: CrossAxisAlignment.start,
                         ),
@@ -127,13 +101,17 @@ class _ProfileMainState extends State<ProfileMain> {
                     ),
                     ProfileButton(
                       onPressHandler: () {
+                        final storage = new FlutterSecureStorage();
                         final signOutUrl = Uri.parse('$BASE_URL/signout');
                         http.get(signOutUrl, headers: {
                           HttpHeaders.contentTypeHeader: 'application/json',
-                          HttpHeaders.authorizationHeader: accessToken,
+                          HttpHeaders.authorizationHeader:
+                              UserStore().accessToken,
                         }).then((value) {
-                          Navigator.of(context).pushReplacementNamed(
-                              AuthenticationPage.routeName);
+                          storage.delete(key: 'access_token').then((value) {
+                            Navigator.of(context).pushReplacementNamed(
+                                AuthenticationPage.routeName);
+                          });
                         });
                         setState(() {
                           isLoggingOut = true;

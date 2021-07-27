@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:xingyuan/common/api.dart';
+import 'package:xingyuan/common/UserStore.dart';
 import 'package:http/http.dart' as http;
 import 'package:xingyuan/common/widgets/InputBox.dart';
 import 'package:xingyuan/screens/tabNavigation/HomePage.dart';
@@ -45,7 +45,7 @@ class _AddWishPageState extends State<AddWishPage> {
       }),
       headers: {
         HttpHeaders.contentTypeHeader: 'application/json',
-        HttpHeaders.authorizationHeader: accessToken,
+        HttpHeaders.authorizationHeader: UserStore().accessToken,
       },
     );
     setState(() {

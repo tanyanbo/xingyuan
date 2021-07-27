@@ -4,11 +4,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:xingyuan/common/api.dart';
+import 'package:xingyuan/common/UserStore.dart';
 import 'package:xingyuan/common/widgets/InputBox.dart';
 import 'package:http/http.dart' as http;
 import 'package:xingyuan/screens/tabNavigation/HomePage.dart';
 import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'PersonalInfo.dart';
 
@@ -31,6 +32,39 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       FirebaseFirestore.instance.collection('users');
 
   bool isLoading = false;
+  final storage = new FlutterSecureStorage();
+
+  @override
+  void initState() {
+    super.initState();
+
+    setState(() {
+      isLoading = true;
+    });
+
+    storage.read(key: 'access_token').then((String? val) {
+      if (val == null) {
+        setState(() {
+          isLoading = false;
+        });
+        return;
+      }
+      final Uri infoUrl = Uri.parse('$BASE_URL/info');
+
+      http.get(
+        infoUrl,
+        headers: {
+          HttpHeaders.contentTypeHeader: 'application/json',
+          HttpHeaders.authorizationHeader: val,
+        },
+      ).then((res) async {
+        final parsed = jsonDecode(res.body) as Map<String, dynamic>;
+        final data = parsed['data'];
+        UserStore(nickname: data['nickname'], coins: data['coins']);
+        await Navigator.of(context).pushReplacementNamed(HomePage.routeName);
+      });
+    });
+  }
 
   Future<String?> showMyDialog(BuildContext context) {
     return showCupertinoDialog<String>(
@@ -72,13 +106,23 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       headers: {HttpHeaders.contentTypeHeader: 'application/json'},
     ).then((res) async {
       final parsed = jsonDecode(res.body) as Map<String, dynamic>;
-      accessToken = parsed['accessToken'];
+      UserStore(
+        accessToken: parsed['accessToken'],
+      );
 
-      if (parsed["isNewUser"]) {
-        await Navigator.of(context).pushNamed(PersonalInfo.routeName);
-      } else {
-        await Navigator.of(context).pushNamed(HomePage.routeName);
-      }
+      storage
+          .write(key: 'access_token', value: parsed['accessToken'])
+          .then((value) {
+        if (parsed["isNewUser"]) {
+          Navigator.of(context).pushNamed(PersonalInfo.routeName);
+        } else {
+          UserStore(
+            nickname: parsed['nickname'],
+            coins: parsed['coins'],
+          );
+          Navigator.of(context).pushNamed(HomePage.routeName);
+        }
+      });
     });
   }
 

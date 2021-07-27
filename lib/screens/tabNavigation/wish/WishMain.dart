@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:xingyuan/common/api.dart';
+import 'package:xingyuan/common/UserStore.dart';
 
 import 'AddWish.dart';
 
@@ -32,11 +32,11 @@ class _WishMainState extends State<WishMain> {
       getWishUrl,
       headers: {
         HttpHeaders.contentTypeHeader: 'application/json',
-        HttpHeaders.authorizationHeader: accessToken,
+        HttpHeaders.authorizationHeader: UserStore().accessToken,
       },
     ).then((res) {
       final parsed = jsonDecode(res.body);
-      if (mounted) {
+      if (mounted && !parsed['data'].isEmpty) {
         final data = parsed['data'].where((wish) {
           return wish['taken'] == false;
         }).toList();
@@ -73,7 +73,7 @@ class _WishMainState extends State<WishMain> {
                   }),
                   headers: {
                     HttpHeaders.contentTypeHeader: 'application/json',
-                    HttpHeaders.authorizationHeader: accessToken,
+                    HttpHeaders.authorizationHeader: UserStore().accessToken,
                   },
                 );
 
