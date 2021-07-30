@@ -3,11 +3,12 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:xingyuan/common/UserStore.dart';
 import 'package:xingyuan/common/routes.dart';
 
-import 'AddWish.dart';
+import 'AddWishPage.dart';
 
 class WishMainArguments {
   int type;
@@ -28,22 +29,33 @@ class _WishMainState extends State<WishMain> {
   @override
   void initState() {
     super.initState();
-    http.get(
-      getWishUrl,
-      headers: {
-        HttpHeaders.contentTypeHeader: 'application/json',
-        HttpHeaders.authorizationHeader: UserStore().accessToken,
-      },
-    ).then((res) {
-      final parsed = jsonDecode(res.body);
-      if (mounted && !parsed['data'].isEmpty) {
-        final data = parsed['data'].where((wish) {
-          return wish['taken'] == false;
-        }).toList();
-        setState(() {
-          wishes = data;
-        });
+    final storage = new FlutterSecureStorage();
+    storage.read(key: 'access_token').then((value) {
+      if (value != null) {
+        UserStore(accessToken: value);
       }
+      storage.read(key: 'id').then((val) {
+        if (val != null) {
+          UserStore(id: val);
+        }
+        http.get(
+          getWishUrl,
+          headers: {
+            HttpHeaders.contentTypeHeader: 'application/json',
+            HttpHeaders.authorizationHeader: UserStore().accessToken,
+          },
+        ).then((res) {
+          final parsed = jsonDecode(res.body);
+          if (mounted && !parsed['data'].isEmpty) {
+            final data = parsed['data'].where((wish) {
+              return wish['taken'] == false;
+            }).toList();
+            setState(() {
+              wishes = data;
+            });
+          }
+        });
+      });
     });
   }
 
@@ -114,7 +126,7 @@ class _WishMainState extends State<WishMain> {
             Expanded(
               child: IconButton(
                 onPressed: () {
-                  Navigator.of(context).pushNamed(AddWishPage.routeName,
+                  Navigator.of(context).pushNamed(AddWishPage.ROUTE_NAME,
                       arguments: WishMainArguments(1));
                 },
                 icon: Image.asset(
@@ -126,7 +138,7 @@ class _WishMainState extends State<WishMain> {
             Expanded(
               child: IconButton(
                 onPressed: () {
-                  Navigator.of(context).pushNamed(AddWishPage.routeName,
+                  Navigator.of(context).pushNamed(AddWishPage.ROUTE_NAME,
                       arguments: WishMainArguments(2));
                 },
                 icon: Image.asset(
@@ -138,7 +150,7 @@ class _WishMainState extends State<WishMain> {
             Expanded(
               child: IconButton(
                 onPressed: () {
-                  Navigator.of(context).pushNamed(AddWishPage.routeName,
+                  Navigator.of(context).pushNamed(AddWishPage.ROUTE_NAME,
                       arguments: WishMainArguments(3));
                 },
                 icon: Image.asset(

@@ -12,7 +12,7 @@ import 'package:xingyuan/screens/tabNavigation/wish/WishMain.dart';
 class AddWishPage extends StatefulWidget {
   AddWishPage({Key? key}) : super(key: key);
 
-  static const routeName = '/addWish';
+  static const ROUTE_NAME = '/addWish';
 
   @override
   _AddWishPageState createState() => _AddWishPageState();
@@ -51,7 +51,7 @@ class _AddWishPageState extends State<AddWishPage> {
     setState(() {
       isDisabled = false;
     });
-    await Navigator.of(context).pushReplacementNamed(HomePage.routeName);
+    await Navigator.of(context).pushReplacementNamed(HomePage.ROUTE_NAME);
   }
 
   @override

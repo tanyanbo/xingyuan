@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:xingyuan/common/UserStore.dart';
 import 'package:xingyuan/common/routes.dart';
 import 'package:xingyuan/screens/authentication/AuthenticationPage.dart';
+import 'package:xingyuan/screens/tabNavigation/profile/MyWishPage.dart';
 import 'package:xingyuan/screens/tabNavigation/profile/widgets/ProfileButton.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
@@ -71,7 +72,10 @@ class _ProfileMainState extends State<ProfileMain> {
                       ),
                     ),
                     ProfileButton(
-                      onPressHandler: () {},
+                      onPressHandler: () async {
+                        await Navigator.of(context)
+                            .pushNamed(MyWishPage.ROUTE_NAME);
+                      },
                       icon: Icons.favorite,
                       iconColor: Colors.pink,
                       text: '我的心愿',
@@ -110,7 +114,7 @@ class _ProfileMainState extends State<ProfileMain> {
                         }).then((value) {
                           storage.delete(key: 'access_token').then((value) {
                             Navigator.of(context).pushReplacementNamed(
-                                AuthenticationPage.routeName);
+                                AuthenticationPage.ROUTE_NAME);
                           });
                         });
                         setState(() {

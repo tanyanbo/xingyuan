@@ -1,15 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:xingyuan/screens/authentication/AuthenticationPage.dart';
-import 'package:xingyuan/screens/authentication/PersonalInfo.dart';
+import 'package:xingyuan/screens/authentication/PersonalInfoPage.dart';
 import 'package:xingyuan/screens/tabNavigation/HomePage.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:xingyuan/screens/tabNavigation/wish/AddWish.dart';
+import 'package:xingyuan/screens/tabNavigation/profile/MyWishPage.dart';
+import 'package:xingyuan/screens/tabNavigation/wish/AddWishPage.dart';
 
 // Start refactoring to use node.js backend
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -22,10 +20,11 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.pink[200],
       ),
       routes: {
-        AuthenticationPage.routeName: (_) => AuthenticationPage(),
-        PersonalInfo.routeName: (_) => PersonalInfo(),
-        HomePage.routeName: (_) => HomePage(),
-        AddWishPage.routeName: (_) => AddWishPage(),
+        AuthenticationPage.ROUTE_NAME: (_) => AuthenticationPage(),
+        PersonalInfoPage.ROUTE_NAME: (_) => PersonalInfoPage(),
+        HomePage.ROUTE_NAME: (_) => HomePage(),
+        AddWishPage.ROUTE_NAME: (_) => AddWishPage(),
+        MyWishPage.ROUTE_NAME: (_) => MyWishPage(),
       },
     );
   }

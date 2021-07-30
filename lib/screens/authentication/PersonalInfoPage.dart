@@ -7,15 +7,15 @@ import 'package:xingyuan/screens/tabNavigation/HomePage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class PersonalInfo extends StatefulWidget {
-  PersonalInfo({Key? key}) : super(key: key);
-  static const routeName = '/info';
+class PersonalInfoPage extends StatefulWidget {
+  PersonalInfoPage({Key? key}) : super(key: key);
+  static const ROUTE_NAME = '/info';
 
   @override
-  _PersonalInfoState createState() => _PersonalInfoState();
+  _PersonalInfoPageState createState() => _PersonalInfoPageState();
 }
 
-class _PersonalInfoState extends State<PersonalInfo> {
+class _PersonalInfoPageState extends State<PersonalInfoPage> {
   final _formKey = GlobalKey<FormState>();
 
   final Map<String, String?> _information = {};
@@ -46,7 +46,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
     } catch (e) {
       return;
     }
-    await Navigator.of(context).pushNamed(HomePage.routeName);
+    await Navigator.of(context).pushNamed(HomePage.ROUTE_NAME);
   }
 
   @override

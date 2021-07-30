@@ -1,7 +1,4 @@
 import 'dart:io';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:xingyuan/common/UserStore.dart';
@@ -12,11 +9,11 @@ import 'package:xingyuan/screens/tabNavigation/HomePage.dart';
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import 'PersonalInfo.dart';
+import 'PersonalInfoPage.dart';
 
 class AuthenticationPage extends StatefulWidget {
   AuthenticationPage({Key? key}) : super(key: key);
-  static const routeName = '/';
+  static const ROUTE_NAME = '/';
 
   @override
   _AuthenticationPageState createState() => _AuthenticationPageState();
@@ -26,11 +23,6 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   final _formKey = GlobalKey<FormState>();
 
   final Map<String, String?> _credentials = {};
-
-  final FirebaseAuth auth = FirebaseAuth.instance;
-
-  final CollectionReference users =
-      FirebaseFirestore.instance.collection('users');
 
   bool isLoading = false;
   final storage = new FlutterSecureStorage();
@@ -60,8 +52,15 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       ).then((res) async {
         final parsed = jsonDecode(res.body) as Map<String, dynamic>;
         final data = parsed['data'];
-        UserStore(nickname: data['nickname'], coins: data['coins']);
-        await Navigator.of(context).pushReplacementNamed(HomePage.routeName);
+        UserStore(
+            nickname: data['nickname'],
+            coins: data['coins'],
+            accessToken: data['token']);
+        await Navigator.of(context).pushReplacementNamed(HomePage.ROUTE_NAME);
+      }).catchError((err) {
+        setState(() {
+          isLoading = false;
+        });
       });
     });
   }
@@ -106,21 +105,22 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       final parsed = jsonDecode(res.body) as Map<String, dynamic>;
       UserStore(
         accessToken: parsed['accessToken'],
+        id: parsed['id'],
       );
 
-      storage
-          .write(key: 'access_token', value: parsed['accessToken'])
-          .then((value) {
-        if (parsed["isNewUser"]) {
-          Navigator.of(context).pushNamed(PersonalInfo.routeName);
-        } else {
-          UserStore(
-            nickname: parsed['nickname'],
-            coins: parsed['coins'],
-          );
-          Navigator.of(context).pushNamed(HomePage.routeName);
-        }
-      });
+      await storage.write(key: 'id', value: parsed['id']);
+
+      await storage.write(key: 'access_token', value: parsed['accessToken']);
+
+      if (parsed["isNewUser"]) {
+        Navigator.of(context).pushNamed(PersonalInfoPage.ROUTE_NAME);
+      } else {
+        UserStore(
+          nickname: parsed['nickname'],
+          coins: parsed['coins'],
+        );
+        Navigator.of(context).pushNamed(HomePage.ROUTE_NAME);
+      }
     });
   }
 
