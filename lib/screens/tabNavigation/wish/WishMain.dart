@@ -99,20 +99,19 @@ class _WishMainState extends State<WishMain> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('WTW'),
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(
-              'assets/images/wishmain.png',
+    return SafeArea(
+      child: Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(
+                'assets/images/wishmain.png',
+              ),
+              fit: BoxFit.fill,
             ),
-            fit: BoxFit.cover,
           ),
+          child: renderList(),
         ),
-        child: renderList(),
       ),
     );
   }

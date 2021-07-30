@@ -133,7 +133,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/images/cover.png'),
-            fit: BoxFit.cover,
+            fit: BoxFit.fill,
           ),
         ),
         child: isLoading

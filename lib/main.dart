@@ -5,6 +5,7 @@ import 'package:xingyuan/screens/authentication/PersonalInfoPage.dart';
 import 'package:xingyuan/screens/tabNavigation/HomePage.dart';
 import 'package:xingyuan/screens/tabNavigation/profile/MyWishPage.dart';
 import 'package:xingyuan/screens/tabNavigation/wish/AddWishPage.dart';
+import 'package:xingyuan/screens/tabNavigation/wishingwell/WishingWellPage.dart';
 
 // Start refactoring to use node.js backend
 Future<void> main() async {
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
         HomePage.ROUTE_NAME: (_) => HomePage(),
         AddWishPage.ROUTE_NAME: (_) => AddWishPage(),
         MyWishPage.ROUTE_NAME: (_) => MyWishPage(),
+        WishingWellPage.ROUTE_NAME: (_) => WishingWellPage(),
       },
     );
   }

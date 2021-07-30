@@ -57,7 +57,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/images/cover.png'),
-            fit: BoxFit.cover,
+            fit: BoxFit.fill,
           ),
         ),
         child: isLoading
